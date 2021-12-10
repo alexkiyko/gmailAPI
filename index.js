@@ -8,9 +8,8 @@ const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
-
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI)
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN })
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 /**
  * Lists the all messages in the user's account.
@@ -25,8 +24,8 @@ function getMessages(auth, maxResults, query = null) {
         const gmail = google.gmail({ version: 'v1', auth });
         gmail.users.messages.list(
             {
-                userId: 'alsmithsale@gmail.com',
-                q: query,  //'from:tim@testlio.com',
+                userId: 'me',
+                q: query,
                 maxResults: maxResults
             }, (err, res) => {
                 if (err) {
@@ -42,23 +41,18 @@ function getMessages(auth, maxResults, query = null) {
     });
 };
 
-// getMessages(oAuth2Client, 10, 'from:no-reply@email.wework.com')
-//     .then((result) => console.log(result))
-//     .catch((error) => console.log(error.message));
-
-
 /**
  * Moves the specified message to the trash.
  *
  * @param auth An authorized OAuth2 client.
  * @param msgId The ID of the message to remove.
  */
-function deleteMessage(msgId, auth) {
+function deleteMessage(auth, msgId) {
     return new Promise((resolve, reject) => {
         const gmail = google.gmail({ version: 'v1', auth });
         gmail.users.messages.trash(
             {
-                userId: 'alsmithsale@gmail.com',
+                userId: 'me',
                 id: msgId
             }, (err, res) => {
                 if (err) {
@@ -76,12 +70,12 @@ function deleteMessage(msgId, auth) {
  * @param auth An authorized OAuth2 client.
  * @param msgId The ID of the message to retrieve.
  */
-function getMessage(msgId, auth) {
+function getMessage(auth, msgId) {
     return new Promise((resolve, reject) => {
         const gmail = google.gmail({ version: 'v1', auth });
         gmail.users.messages.get(
             {
-                userId: 'alsmithsale@gmail.com',
+                userId: 'me',
                 id: msgId,
             }, (err, res) => {
                 if (err) {
@@ -89,22 +83,18 @@ function getMessage(msgId, auth) {
                     return;
                 }
                 if (res) {
-                    var body = res.data//.payload.parts[0].body.data;
+                    var body = res.data;
                     var parsedMessage = parseMessage(body);
-                    var textHtml = parsedMessage.textHtml
+                    var textHtml = parsedMessage.textHtml;
                     var text = htmlToText(textHtml, {
                         wordwrap: 130,
                         // whitespaceCharacters: '\t\r\n\f\u200b'
                     });
-                } resolve(text)
+                } resolve(text);
             }
         );
     });
 };
-
-// getMessage('17d80debd737def9', oAuth2Client)
-//     .then((result) => console.log(result))
-//     .catch((error) => console.log(error.message));
 
 /**
  * Sends the specified message to the recipients.
@@ -120,7 +110,7 @@ async function sendMail() {
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
-                user: 'alsmithsale@gmail.com',
+                user: "me",
                 clientId: CLIENT_ID,
                 clientSecret: CLIENT_SECRET,
                 refreshToken: REFRESH_TOKEN,
@@ -129,8 +119,8 @@ async function sendMail() {
         });
 
         const mailOptions = {
-            from: 'ALSMITHSALE <alsmithsale@gmail.com>',
-            to: 'avkiyko@gmail.com',
+            from: 'TITLE <from_my_email>',
+            to: '<test_email>',
             subject: 'Hello from gmail using API',
             text: 'Hello from gmail email using API',
             html: '<h1>Hello from gmail email using API</h1>',
@@ -143,14 +133,9 @@ async function sendMail() {
     }
 }
 
-// sendMail()
-//     .then((result) => console.log('Email sent...', result))
-//     .catch((error) => console.log(error.message));
-
 module.exports = {
     getMessage,
     getMessages,
     deleteMessage,
     oAuth2Client
-
-}
+};

@@ -6,13 +6,14 @@ let url;
 
 describe('Verify message', function () {
 
-    before(async function () {
+    it('sd', async function () {
         const messages = await getMessages(oAuth2Client, 10, 'from:no-reply@email.test.com');
         msgId = messages[0].id;
 
-        const body = await getMessage(msgId, oAuth2Client);
+        const body = await getMessage(oAuth2Client, msgId);
         message = body.split('\n');
         url = message.filter(el => el.includes('https'))[0];
+        console.log(message);
     });
 
     it('Check that message contains the text', () => {
@@ -24,7 +25,7 @@ describe('Verify message', function () {
     });
 
     it('Should move the message to trash', async () => {
-        const status = await deleteMessage(msgId, oAuth2Client);
+        const status = await deleteMessage(oAuth2Client, msgId);
         expect(status).to.eql(200);
     });
 });
