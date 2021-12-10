@@ -1,0 +1,21 @@
+{
+  "name": "gmailAPI",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --colors test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.3.4",
+    "dotenv": "^10.0.0",
+    "gmail-api-parse-message": "^2.1.2",
+    "googleapis": "^39.2.0",
+    "html-to-text": "^8.1.0",
+    "mocha": "^9.1.3",
+    "nodemailer": "^6.7.2"
+  }
+}
